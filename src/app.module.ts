@@ -6,19 +6,45 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 import { ItemsModule } from './items/items.module';
+import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    GraphQLModule.forRoot<ApolloDriverConfig>({
+
+    GraphQLModule.forRootAsync({
       driver: ApolloDriver,
-     // debug: false,
-      playground: false,
-      autoSchemaFile: join( process.cwd(), 'src/schema.gql'),
-      plugins: [
-        ApolloServerPluginLandingPageLocalDefault()
-      ]
-    }),
+      imports:[ AuthModule ],
+      inject: [ JwtService ],
+      useFactory: async ( jwtService: JwtService) => ({
+        playground: false,
+        autoSchemaFile: join( process.cwd(), 'src/schema.gql'),
+        plugins: [
+          ApolloServerPluginLandingPageLocalDefault()
+        ],
+        context({req, res}) {
+          // const token = req.headers.authorization?.replace('Bearer ', '')
+          // if ( !token ) throw Error('No token provided')
+          
+          // const payload = jwtService.decode( token )
+          // if ( !payload ) throw Error('Invalid token')
+        }
+      })
+    }), 
+
+    
+    // GraphQLModule.forRoot<ApolloDriverConfig>({
+    //   driver: ApolloDriver,
+    //  // debug: false,
+      // playground: false,
+      // autoSchemaFile: join( process.cwd(), 'src/schema.gql'),
+      // plugins: [
+      //   ApolloServerPluginLandingPageLocalDefault()
+      // ]
+    // }),
+
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST,
@@ -29,7 +55,9 @@ import { ItemsModule } from './items/items.module';
       synchronize: true,
       autoLoadEntities: true,
     }),
-    ItemsModule
+    ItemsModule,
+    UsersModule,
+    AuthModule
   ],
   controllers: [],
   providers: [],
