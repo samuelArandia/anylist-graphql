@@ -20,8 +20,8 @@ export class ItemsService {
     // return item[0];
     const item = this.itemsRepository.create({ ...createItemInput, user });
     return await this.itemsRepository.save( item );
-
   }
+
   async findAll( user: User, paginationArgs: PaginationArgs, searchArgs: SearchArgs): Promise<Item[]> {
 
     const { limit, offset } = paginationArgs;
@@ -32,7 +32,7 @@ export class ItemsService {
     ${search ? `AND LOWER(name) like '%${search.toLowerCase()}%'` : ''} 
     LIMIT ${limit} OFFSET ${offset}`;
 
-    return this.itemsRepository.query( query );
+    return await this.itemsRepository.query( query );
     // const queryBuilder = this.itemsRepository.createQueryBuilder()
     //   .take( limit )
     //   .skip( offset )
@@ -80,7 +80,7 @@ export class ItemsService {
     return await this.itemsRepository.save( item );
   }
 
-  async remove(id: string, user: User) {
+  async remove(id: string, user: User): Promise<Item> {
     //TODO: soft delete, integridiad referencial
     const item = await this.findOne( id, user );
     await this.itemsRepository.remove( item );

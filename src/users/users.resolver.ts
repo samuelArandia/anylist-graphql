@@ -73,4 +73,6 @@ export class UsersResolver {
     return this.itemsService.findAll( user, paginationArgs, searchArgs );
   }
 
+  //TODO:GetlistByUser 
+
 }
