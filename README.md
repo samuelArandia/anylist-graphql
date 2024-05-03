@@ -6,25 +6,34 @@
 [circleci-url]: https://circleci.com/gh/nestjs/nest
 
 # Ambiente Dev
+
 ### Instrucciones
+
 1. Clonar proyecto
-2. Copiar el ```.env.template``` y renombrar a ```.env``` 
+2. Copiar el `.env.template` y renombrar a `.env`
 
+3. Ejecutar:
 
-3. Ejecutar: 
-``` 
+```
 npm install
-``` 
+```
+
 4. Levantar la imagen (Docker Desktop)
+
 ```
-docker-compose up -d 
+docker-compose up -d
 ```
-5. Levantar el backend de nest 
-``` 
+
+5. Levantar el backend de nest
+
+```
 npm run start:dev
-``` 
-6. Visitar el sitio 
+```
+
+6. Visitar el sitio
+
 ```
 localhost:3050/graphql
 ```
+
 7. Ejecutar la **"mutacion"** executeSeed, para llenar la base de datos con la información
