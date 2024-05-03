@@ -17,8 +17,9 @@ export class List {
 
   // relation, index('userId-list- index)
   // @Field( () => User)
-  @ManyToOne ( () => User, (user) => user.list, { nullable: false, lazy: true } )
+  @ManyToOne ( () => User, (user) => user.lists, { nullable: false, lazy: true } )
   @Index('userId-list-index')
+  @Field( () => User)
   user: User;
 
 }

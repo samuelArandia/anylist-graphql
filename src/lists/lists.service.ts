@@ -12,7 +12,7 @@ export class ListsService {
 
   constructor(
     @InjectRepository(List)
-    private listRepository: Repository<List>
+    private readonly listRepository: Repository<List>
   ) {}
 
   async create(createListInput: CreateListInput, user: User): Promise<List> {
@@ -24,7 +24,7 @@ export class ListsService {
     const { limit, offset } = paginationArgs;
     const { search } = searchArgs;
 
-    const query = `SELECT * FROM "items" 
+    const query = `SELECT * FROM "lists" 
     WHERE "userId" = '${user.id}' 
     ${search ? `AND LOWER(name) like '%${search.toLowerCase()}%'` : ''} 
     LIMIT ${limit} OFFSET ${offset}`;
@@ -69,7 +69,6 @@ export class ListsService {
       },
     })
   }
-
 
 
 }

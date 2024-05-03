@@ -1,9 +1,9 @@
-import { Resolver, Query, Mutation, Args, Int, ID } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, ID } from '@nestjs/graphql';
+import { ParseUUIDPipe, UseGuards } from '@nestjs/common';
 import { ListsService } from './lists.service';
 import { List } from './entities/list.entity';
 import { CreateListInput } from './dto/create-list.input';
 import { UpdateListInput } from './dto/update-list.input';
-import { ParseUUIDPipe, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { User } from 'src/users/entities/user.entity';
@@ -14,8 +14,8 @@ import { PaginationArgs, SearchArgs } from 'src/common/dto/args';
 export class ListsResolver {
   constructor(private readonly listsService: ListsService) {}
 
-  @Mutation(() => List)
-  createList(
+  @Mutation(() => List, { name: 'createList' })
+  async createList(
     @Args('createListInput') createListInput: CreateListInput,
     @CurrentUser() user:User
   ): Promise<List>{
@@ -28,7 +28,7 @@ export class ListsResolver {
     @Args() paginationArgs: PaginationArgs,
     @Args() searchArgs: SearchArgs
   ): Promise<List[]>{
-    return await this.listsService.findAll(user, paginationArgs, searchArgs);
+    return this.listsService.findAll(user, paginationArgs, searchArgs);
   }
 
   @Query(() => List, { name: 'list' })
@@ -36,7 +36,7 @@ export class ListsResolver {
     @Args('id', { type: () => ID }, ParseUUIDPipe) id: string,
     @CurrentUser() user: User
   ):Promise<List> {
-    return await this.listsService.findOne(id, user);
+    return this.listsService.findOne(id, user);
   }
 
   @Mutation(() => List)
@@ -44,7 +44,7 @@ export class ListsResolver {
     @Args('updateListInput') updateListInput: UpdateListInput,
     @CurrentUser() user: User
   ):Promise<List>{
-    return await this.listsService.update(updateListInput.id, updateListInput, user);
+    return this.listsService.update(updateListInput.id, updateListInput, user);
   }
 
   @Mutation(() => List)
@@ -52,6 +52,6 @@ export class ListsResolver {
     @Args('id', { type: () => ID }) id: string,
     @CurrentUser() user: User
   ) {
-    return await this.listsService.remove(id, user);
+    return this.listsService.remove(id, user);
   }
 }
