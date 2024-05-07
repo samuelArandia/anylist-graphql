@@ -20,17 +20,35 @@ export class ListsService {
     return await this.listRepository.save( list );
   }
 
-  async findAll(user: User, paginationArgs: PaginationArgs, searchArgs: SearchArgs ): Promise<List[]> {
+  // async findAll(user: User, paginationArgs: PaginationArgs, searchArgs: SearchArgs ): Promise<List[]> {
+  //   const { limit, offset } = paginationArgs;
+  //   const { search } = searchArgs;
+
+  //   const query = `SELECT * FROM "lists" 
+  //   WHERE "userId" = '${user.id}' 
+  //   ${search ? `AND LOWER(name) like '%${search.toLowerCase()}%'` : ''} 
+  //   LIMIT ${limit} OFFSET ${offset}`;
+
+  //   return await this.listRepository.query( query );
+  // }
+
+  async findAll( user: User, paginationArgs: PaginationArgs, searchArgs: SearchArgs ): Promise<List[]> {
+
     const { limit, offset } = paginationArgs;
     const { search } = searchArgs;
+    
+    const queryBuilder = this.listRepository.createQueryBuilder()
+      .take( limit )
+      .skip( offset )
+      .where(`"userId" = :userId`, { userId: user.id });
 
-    const query = `SELECT * FROM "lists" 
-    WHERE "userId" = '${user.id}' 
-    ${search ? `AND LOWER(name) like '%${search.toLowerCase()}%'` : ''} 
-    LIMIT ${limit} OFFSET ${offset}`;
+    if ( search ) {
+      queryBuilder.andWhere('LOWER(name) like :name', { name: `%${ search.toLowerCase() }%` });
+    }
 
-    return await this.listRepository.query( query );
+    return queryBuilder.getMany();
   }
+
 
   async findOne(id: string, user: User): Promise<List> {
     const list = await this.listRepository.findOneBy({

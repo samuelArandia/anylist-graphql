@@ -28,7 +28,8 @@ export class Item {
   @Field( () => User )
   user: User
 
-  @OneToMany( () => ListItem, (listItem) => listItem.item, { nullable: true, lazy: true } )
+  @OneToMany(() => ListItem, (listItem) => listItem.item, { lazy: true })
+  @Field( () => [ListItem] )
   listItem: ListItem[]
 
 }

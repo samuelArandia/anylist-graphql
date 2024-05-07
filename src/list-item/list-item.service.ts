@@ -4,6 +4,9 @@ import { UpdateListItemInput } from './dto/update-list-item.input';
 import { ListItem } from './entities/list-item.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { List } from 'src/lists/entities/list.entity';
+import { PaginationArgs, SearchArgs } from 'src/common/dto/args';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class ListItemService {
@@ -11,6 +14,7 @@ export class ListItemService {
   constructor(
     @InjectRepository(ListItem)
     private readonly listItemsRepository: Repository<ListItem>
+
   ) {}
 
 
@@ -27,8 +31,23 @@ export class ListItemService {
     return this.listItemsRepository.save( newListItem );
   }
 
-  async findAll():Promise<ListItem[]> {
-    return this.listItemsRepository.find();
+  async findAll( list: List, paginationArgs: PaginationArgs, searchArgs: SearchArgs ): Promise<ListItem[]> {
+
+    const { limit, offset } = paginationArgs;
+    const { search } = searchArgs;
+    
+    const queryBuilder = this.listItemsRepository.createQueryBuilder('listItem') // <-- Nombre para las relaciones
+      .innerJoin('listItem.item','item') // <--- Lo añadí después, fue un problema que no grabé
+      .take( limit )
+      .skip( offset )
+      .where(`"listId" = :listId`, { listId: list.id });
+
+    if ( search ) {
+      queryBuilder.andWhere('LOWER(item.name) like :name', { name: `%${ search.toLowerCase() }%` });
+    }
+
+    return queryBuilder.getMany();
+
   }
 
   findOne(id: number) {

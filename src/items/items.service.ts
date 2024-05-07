@@ -22,37 +22,64 @@ export class ItemsService {
     return await this.itemsRepository.save( item );
   }
 
-  async findAll( user: User, paginationArgs: PaginationArgs, searchArgs: SearchArgs): Promise<Item[]> {
+  // async findAll( user: User, paginationArgs: PaginationArgs, searchArgs: SearchArgs): Promise<Item[]> {
+
+  //   const { limit, offset } = paginationArgs;
+  //   const { search } = searchArgs;
+
+  //   const query = `SELECT * FROM "items" 
+  //   WHERE "userId" = '${user.id}' 
+  //   ${search ? `AND LOWER(name) like '%${search.toLowerCase()}%'` : ''} 
+  //   LIMIT ${limit} OFFSET ${offset}`;
+
+  //   return await this.itemsRepository.query( query );
+  //   // const queryBuilder = this.itemsRepository.createQueryBuilder()
+  //   //   .take( limit )
+  //   //   .skip( offset )
+  //   //   .where(`"userId" = :userId`, { userId: user.id });
+
+  //   // if ( search ) {
+  //   //   queryBuilder.andWhere(`LOWER(name) like :name`, { name: `%${ search.toLowerCase() }%` });
+  //   // }
+
+  //   // return queryBuilder.getMany();
+    
+
+  //   // return await this.itemsRepository.find({
+  //   //   take: limit, // limit 10
+  //   //   skip: offset, // offset 0
+  //   //   where: {
+  //   //     user: {
+  //   //       id: user.id
+  //   //     },
+  //   //     name: Like(`%${search}%`) // SELECT * FROM items WHERE name LIKE '%search%'
+  //   //   }
+  //   // });
+  // }
+
+  async findAll( user: User, paginationArgs: PaginationArgs, searchArgs: SearchArgs ): Promise<Item[]> {
 
     const { limit, offset } = paginationArgs;
     const { search } = searchArgs;
-
-    const query = `SELECT * FROM "items" 
-    WHERE "userId" = '${user.id}' 
-    ${search ? `AND LOWER(name) like '%${search.toLowerCase()}%'` : ''} 
-    LIMIT ${limit} OFFSET ${offset}`;
-
-    return await this.itemsRepository.query( query );
-    // const queryBuilder = this.itemsRepository.createQueryBuilder()
-    //   .take( limit )
-    //   .skip( offset )
-    //   .where(`"userId" = :userId`, { userId: user.id });
-
-    // if ( search ) {
-    //   queryBuilder.andWhere(`LOWER(name) like :name`, { name: `%${ search.toLowerCase() }%` });
-    // }
-
-    // return queryBuilder.getMany();
     
+    const queryBuilder = this.itemsRepository.createQueryBuilder()
+      .take( limit )
+      .skip( offset )
+      .where(`"userId" = :userId`, { userId: user.id });
 
-    // return await this.itemsRepository.find({
-    //   take: limit, // limit 10
-    //   skip: offset, // offset 0
+    if ( search ) {
+      queryBuilder.andWhere('LOWER(name) like :name', { name: `%${ search.toLowerCase() }%` });
+    }
+
+    return queryBuilder.getMany();
+    // return this.itemsRepository.find({
+    //   take: limit,
+    //   skip: offset,
     //   where: {
     //     user: {
     //       id: user.id
     //     },
-    //     name: Like(`%${search}%`) // SELECT * FROM items WHERE name LIKE '%search%'
+    //     name: Like(`%${ search.toLowerCase() }%`) 
     //   }
     // });
   }
