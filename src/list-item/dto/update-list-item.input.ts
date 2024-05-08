@@ -8,7 +8,7 @@ export class UpdateListItemInput extends PartialType(CreateListItemInput) {
   
   @Field(() => ID)
   @IsUUID()
-  id: number;
+  id: string;
 
   
 }

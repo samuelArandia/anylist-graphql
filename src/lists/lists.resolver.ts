@@ -72,5 +72,12 @@ export class ListsResolver {
 
   }
 
+  @ResolveField(() => Number, { name: 'totalItems' })
+  async countlistTotalItems( 
+    @Parent() list: List 
+  ): Promise<number> {
+
+    return this.listItemsService.countListItems( list );
+  }
 
 }
