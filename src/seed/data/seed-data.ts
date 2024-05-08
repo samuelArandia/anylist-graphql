@@ -1,26 +1,45 @@
 export const SEED_USERS = [
     {
-        fullName: 'Fernando Herrera',
-        email: 'fernando@google.com',
+        fullName: 'Samuel Arandia',
+        email: 'samuelarandia@gmail.com',
         password: '123456',
         roles: ['admin','superUser','user'],
         isActive: true
     },
     {
-        fullName: 'Melissa Flores',
-        email: 'melissa@google.com',
+        fullName: 'Daniela Fajardo',
+        email: 'daniela@google.com',
         password: '123456',
         roles: ['user'],
         isActive: true
     },
     {
-        fullName: 'Hernando Vallejo',
-        email: 'hernando@google.com',
+        fullName: 'Moises Arandia',
+        email: 'moisesarandia@gmail.com',
         password: '123456',
         roles: ['user'],
         isActive: false
     },
 ]
+
+export const SEED_LISTS = [
+    {
+        name: "Lista de compras",
+    },
+    {
+        name: "Lista de tareas",
+    },  
+    {
+        name: "Lista de pendientes",
+    },
+    {
+        name: "Lista de deseos",
+    },
+    {
+        name: "Lista de regalos",
+    },  
+]
+
 
 export const SEED_ITEMS = [
     {
