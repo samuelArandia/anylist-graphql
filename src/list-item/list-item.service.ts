@@ -71,19 +71,21 @@ export class ListItemService {
     
     const { listId, itemId, ...rest } = updateListItemInput;
 
-    const listItem = await this.listItemsRepository.preload({
-      ...rest,
-      list: { id: listId },
-      item: { id: itemId },
-      id: id.toString(), // Convert id to string
-    });
+    const queryBuilder = this.listItemsRepository.createQueryBuilder()
+      .update()
+      .set( rest )
+      .where('id = :id', { id });
 
-    if ( !listItem ) {
-      throw new NotFoundException(`ListItem with id ${ id } not found`);
+    if ( listId ) {
+      queryBuilder.set( { list: { id: listId } } );
+    }
+    if ( itemId ) {
+      queryBuilder.set( { item: { id: itemId } } );
     }
 
-    return this.listItemsRepository.save( listItem );
+    await queryBuilder.execute();
 
+    return this.findOne( id );
   }
 
   remove(id: number) {
